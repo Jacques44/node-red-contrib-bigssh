@@ -1,0 +1,112 @@
+<!--
+  Copyright 2013, 2014 IBM Corp.
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+
+<script type="text/x-red" data-template-name="bigssh">
+
+    <div class="form-row">
+         <label for="node-input-filename"><i class="fa fa-file"></i> <span data-i18n="bigssh.label.filename"></span></label>
+         <input type="text" id="node-input-filename" data-i18n="[placeholder]bigssh.label.filename">
+    </div>
+  <div class="form-row">
+      <label>&nbsp;</label>
+      <input type="checkbox" id="node-input-nopayload" style="display: inline-block; width: auto; vertical-align: top;">
+      <label for="node-input-nopayload" style="width: 70%;"><span data-i18n="bigssh.label.nopayload"></span></label>
+  </div>      
+
+    <div class="form-row">
+        <label for="node-input-encoding"><i class="fa fa-sign-in"></i> <span data-i18n="bigssh.label.encoding"></span></label>
+        <select id="node-input-encoding">
+            <option value="utf8" data-i18n="bigssh.label.line_encoding_utf8"></option>
+            <option value="ascii" data-i18n="bigssh.label.line_encoding_ascii"></option>            
+            <option value="base64" data-i18n="bigssh.label.line_encoding_base64"></option>
+            <option value="binary" data-i18n="bigssh.label.line_encoding_binary"></option>
+            <option value="hex" data-i18n="bigssh.label.line_encoding_hex"></option>
+            <option value="ucs2" data-i18n="bigssh.label.line_encoding_ucs2"></option>
+        </select>
+    </div>
+
+    <div class="form-row">
+        <label for="node-input-flow"><i class="fa fa-paper-plane-o" aria-hidden="true"></i> <span data-i18n="bigssh.label.flow"></span></label>
+        <select id="node-input-flow">
+            <option value="blocks" data-i18n="bigssh.output.blocks"></option>
+            <option value="lines" data-i18n="bigssh.output.lines"></option>            
+            <option value="buffer" data-i18n="bigssh.output.buffer"></option>
+        </select>
+    </div>
+
+    <div class="form-row">
+        <label>&nbsp;</label>
+        <label for="node-input-name" style="width: 30%;"><i class="fa fa-truck"></i> <span data-i18n="bigssh.label.highWaterMark"></span></label>
+        <input style="width: 10%;" type="text" id="node-input-highWaterMark" data-i18n="[placeholder]bigssh.label.highWaterMark">
+    </div>      
+
+    <div class="form-row">
+        <label for="node-input-format"><i class="fa fa-sign-out" aria-hidden="true"></i> <span data-i18n="bigssh.label.format"></span></label>
+        <select id="node-input-format">    
+            <option value="utf8" data-i18n="bigssh.label.line_encoding_utf8"></option>
+            <option value="ascii" data-i18n="bigssh.label.line_encoding_ascii"></option>            
+            <option value="base64" data-i18n="bigssh.label.line_encoding_base64"></option>
+            <option value="binary" data-i18n="bigssh.label.line_encoding_binary"></option>
+            <option value="hex" data-i18n="bigssh.label.line_encoding_hex"></option>
+            <option value="ucs2" data-i18n="bigssh.label.line_encoding_ucs2"></option>
+        </select>
+    </div>    
+
+     <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> <span data-i18n="bigssh.label.name"></span></label>
+        <input type="text" id="node-input-name" data-i18n="[placeholder]bigssh.label.name">
+    </div>
+    
+
+</script>
+
+<script type="text/x-red" data-help-name="bigssh">
+    <p>Reads the specified file and sends the content as <code>msg.payload</code>,
+    and the filename as <code>msg.filename</code>.</p>
+    <p>The filename can be configured in the node. If left blank it should be
+    set by <code>msg.filename</code> on the incoming message.</p>
+    <p>The node can send <b>blocks of data</b> or <b>lines of data</b> or <b>a whole buffer of data</b>
+</script>
+
+<script type="text/javascript">
+
+    RED.nodes.registerType('bigssh',{
+        category: 'advanced',
+        defaults: {
+            name: {value:""},
+            host: {value:"192.168.1.90"},
+            privateKey: {value:"/Users/frip/.ssh/id_rsa"},
+            username: {value:"root"},
+            commandLine: {value: "./test.sh"},
+            remote: {value: "test"},
+            minError: {value: 1},
+            filename: {value:""},
+            encoding: { value: "utf8" },    // line-by-line + fs
+            format: { value: "utf8" } // line-by-line + string
+        },
+        color:"#0099cc",
+        inputs:1,
+        outputs:4,
+        icon: "server.png",
+        label: function() {
+            return this.name||this.filename||this._("bigssh.label.nodelabel");
+        },
+        labelStyle: function() {
+            return this.name?"node_label_italic":"";
+        }
+    });
+
+</script>

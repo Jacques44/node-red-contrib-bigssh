@@ -1,0 +1,29 @@
+{
+    "bigssh": {
+        "label": {
+            "nodelabel": "Big SSH",
+            "name": "Name",
+            "filename": "Filename",
+            "encoding": "Read as",
+            "flow": "Output as",
+            "format": "Send as",
+            "deletelabel": "delete __file__",
+            "highWaterMark": "Block size (KB)",
+            "nopayload": "Payload is never a filename",
+
+            "line_encoding": "encoding",
+            "line_encoding_utf8": "utf8",
+            "line_encoding_ascii": "ascii",
+            "line_encoding_base64": "base64",
+            "line_encoding_binary": "binary (latin-1)",
+            "line_encoding_hex": "hex (hexadecimal)",
+            "line_encoding_ucs2": "ucs2 (= uft16le)"
+        },
+        "output": {
+            "buffer": "a buffer",
+            "blocks": "multiple blocks",
+            "lines": "multiple lines",
+            "string": "a string"
+        }        
+    }
+}
