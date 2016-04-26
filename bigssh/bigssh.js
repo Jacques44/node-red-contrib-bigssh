@@ -41,7 +41,7 @@ module.exports = function(RED) {
       RED.nodes.createNode(this, config);
 
       // new instance of biglib for this configuration
-      var bignode = new biglib({ config: config, node: this, status: 'filesize', generator: 'remote' });
+      var bignode = new biglib({ config: config, node: this, status: 'filesize', parser: 'remote', generator: 'remote' });
 
       // biglib changes the configuration to add some properties
       config = bignode.config();

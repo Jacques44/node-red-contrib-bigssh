@@ -87,11 +87,10 @@
         category: 'advanced',
         defaults: {
             name: {value:""},
-            host: {value:"192.168.1.90"},
+            host: {value:"localhost"},
             privateKey: {value:"/Users/frip/.ssh/id_rsa"},
-            username: {value:"root"},
+            username: {value:"Jacques"},
             commandLine: {value: "./test.sh"},
-            remote: {value: "test"},
             minError: {value: 1},
             filename: {value:""},
             encoding: { value: "utf8" },    // line-by-line + fs
@@ -99,7 +98,7 @@
         },
         color:"#0099cc",
         inputs:1,
-        outputs:4,
+        outputs:3,
         icon: "server.png",
         label: function() {
             return this.name||this.filename||this._("bigssh.label.nodelabel");
