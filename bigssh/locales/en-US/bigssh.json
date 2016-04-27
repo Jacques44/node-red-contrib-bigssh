@@ -8,8 +8,11 @@
             "flow": "Output as",
             "format": "Send as",
             "deletelabel": "delete __file__",
-            "highWaterMark": "Block size (KB)",
             "nopayload": "Payload is never a filename",
+            "host": "Host",
+            "port": "Port",
+            "user": "Username",
+            "privateKey": "Private Key Path",
 
             "line_encoding": "encoding",
             "line_encoding_utf8": "utf8",
@@ -18,12 +21,6 @@
             "line_encoding_binary": "binary (latin-1)",
             "line_encoding_hex": "hex (hexadecimal)",
             "line_encoding_ucs2": "ucs2 (= uft16le)"
-        },
-        "output": {
-            "buffer": "a buffer",
-            "blocks": "multiple blocks",
-            "lines": "multiple lines",
-            "string": "a string"
-        }        
+        }    
     }
 }

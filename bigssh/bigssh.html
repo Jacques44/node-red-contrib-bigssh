@@ -14,7 +14,48 @@
   limitations under the License.
 -->
 
+<script type="text/x-red" data-template-name="SSH_Credentials">
+    <div class="form-row">
+        <label for="node-config-input-host"><i class="fa fa-globe"></i> <span data-i18n="bigssh.label.host"></span></label>
+        <input type="text" id="node-config-input-host">
+    </div>
+    <div class="form-row">
+        <label for="node-config-input-port"><i class="fa fa-random"></i> <span data-i18n="bigssh.label.port"></span></label>
+        <input type="text" id="node-config-input-port">
+    </div>
+        <div class="form-row">
+        <label for="node-config-input-username"><i class="fa fa-user"></i> <span data-i18n="bigssh.label.user"></span></label>
+        <input type="text" id="node-config-input-username">
+    </div>
+        <div class="form-row">
+        <label for="node-config-input-privateKey"><i class="fa fa-lock"></i> <span data-i18n="bigssh.label.privateKey"></span></label>
+        <input type="text" id="node-config-input-privateKey">
+    </div>
+</script>
+
+<script type="text/javascript">
+    RED.nodes.registerType('SSH_Credentials',{
+        category: 'config',
+        defaults: {
+            host: { value: "127.0.0.1", required: true},
+            port: { value: "22", required: true}
+        },
+        credentials: {
+            username: { type: "text" },
+            privateKey: { type: "text" }
+        },
+        label: function() {
+            return (this.credentials ? this.credentials.username : '?') + '@' + this.host;
+        }
+    });
+</script>
+
 <script type="text/x-red" data-template-name="bigssh">
+
+    <div class="form-row">
+        <label for="node-input-mydb"><i class="fa fa-database"></i> Database</label>
+        <input type="text" id="node-input-myssh">
+    </div>
 
     <div class="form-row">
          <label for="node-input-filename"><i class="fa fa-file"></i> <span data-i18n="bigssh.label.filename"></span></label>
@@ -38,33 +79,6 @@
         </select>
     </div>
 
-    <div class="form-row">
-        <label for="node-input-flow"><i class="fa fa-paper-plane-o" aria-hidden="true"></i> <span data-i18n="bigssh.label.flow"></span></label>
-        <select id="node-input-flow">
-            <option value="blocks" data-i18n="bigssh.output.blocks"></option>
-            <option value="lines" data-i18n="bigssh.output.lines"></option>            
-            <option value="buffer" data-i18n="bigssh.output.buffer"></option>
-        </select>
-    </div>
-
-    <div class="form-row">
-        <label>&nbsp;</label>
-        <label for="node-input-name" style="width: 30%;"><i class="fa fa-truck"></i> <span data-i18n="bigssh.label.highWaterMark"></span></label>
-        <input style="width: 10%;" type="text" id="node-input-highWaterMark" data-i18n="[placeholder]bigssh.label.highWaterMark">
-    </div>      
-
-    <div class="form-row">
-        <label for="node-input-format"><i class="fa fa-sign-out" aria-hidden="true"></i> <span data-i18n="bigssh.label.format"></span></label>
-        <select id="node-input-format">    
-            <option value="utf8" data-i18n="bigssh.label.line_encoding_utf8"></option>
-            <option value="ascii" data-i18n="bigssh.label.line_encoding_ascii"></option>            
-            <option value="base64" data-i18n="bigssh.label.line_encoding_base64"></option>
-            <option value="binary" data-i18n="bigssh.label.line_encoding_binary"></option>
-            <option value="hex" data-i18n="bigssh.label.line_encoding_hex"></option>
-            <option value="ucs2" data-i18n="bigssh.label.line_encoding_ucs2"></option>
-        </select>
-    </div>    
-
      <div class="form-row">
         <label for="node-input-name"><i class="fa fa-tag"></i> <span data-i18n="bigssh.label.name"></span></label>
         <input type="text" id="node-input-name" data-i18n="[placeholder]bigssh.label.name">
@@ -86,16 +100,14 @@
     RED.nodes.registerType('bigssh',{
         category: 'advanced',
         defaults: {
-            name: {value:""},
-            host: {value:"localhost"},
-            privateKey: {value:"/Users/frip/.ssh/id_rsa"},
-            username: {value:"Jacques"},
-            commandLine: {value: "./test.sh"},
-            minError: {value: 1},
-            filename: {value:""},
-            encoding: { value: "utf8" },    // line-by-line + fs
-            format: { value: "utf8" } // line-by-line + string
-        },
+            name: { value: "" },
+            commandLine: { value: "" },
+            commandArgs: { value: "" },
+            minError: { value: 1 },
+            filename: { value:"" },
+            encoding: { value: "utf8" },
+            myssh: { type: "SSH_Credentials", required: true },
+        },       
         color:"#0099cc",
         inputs:1,
         outputs:3,

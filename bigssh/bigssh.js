@@ -36,18 +36,32 @@ module.exports = function(RED) {
 
     var biglib = require('node-red-biglib');
 
+    function SSH_Node(n) {
+      RED.nodes.createNode(this,n);
+      this.host = n.host;
+      this.port = n.port; 
+    }
+
+    RED.nodes.registerType("SSH_Credentials", SSH_Node, {
+      credentials: {
+        username: { type: "text" },
+        privateKey: { type: "text" }
+      }
+    });      
+
     function BigSSH(config) {
 
       RED.nodes.createNode(this, config);
 
       // new instance of biglib for this configuration
-      var bignode = new biglib({ config: config, node: this, status: 'filesize', parser: 'remote', generator: 'remote' });
+      var bignode = new biglib({ config: config, node: this, status: 'filesize', parser: 'remote', generator: 'remote', credentials: RED.nodes.getNode(config.myssh) });
 
       // biglib changes the configuration to add some properties
       config = bignode.config();
 
       this.on('input', bignode.main.bind(bignode));
-    }
+    }  
 
-    RED.nodes.registerType("bigssh",BigSSH);
+    RED.nodes.registerType("bigssh", BigSSH);
+
 }
