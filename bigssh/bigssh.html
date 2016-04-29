@@ -38,14 +38,18 @@
         category: 'config',
         defaults: {
             host: { value: "127.0.0.1", required: true},
-            port: { value: "22", required: true}
+            port: { value: "22", required: true},
+            userlabel: { value: "" }
         },
         credentials: {
             username: { type: "text" },
             privateKey: { type: "text" }
-        },
+        },        
         label: function() {
-            return (this.credentials ? this.credentials.username : '?') + '@' + this.host;
+            return this.userlabel;
+        },
+        oneditsave: function() {
+            this.userlabel = (this.credentials ? this.credentials.username : '?') + '@' + this.host;
         }
     });
 </script>
@@ -101,7 +105,7 @@
         category: 'advanced',
         defaults: {
             name: { value: "" },
-            commandLine: { value: "" },
+            commandLine: { value: "/bin/false" },
             commandArgs: { value: "" },
             minError: { value: 1 },
             filename: { value:"" },
@@ -113,7 +117,8 @@
         outputs:3,
         icon: "server.png",
         label: function() {
-            return this.name||this.filename||this._("bigssh.label.nodelabel");
+            var levelNode = RED.nodes.node(this.myssh);
+            return this.name||(levelNode?levelNode.label():"Big SSH");
         },
         labelStyle: function() {
             return this.name?"node_label_italic":"";

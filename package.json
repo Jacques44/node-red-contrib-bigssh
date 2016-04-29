@@ -3,7 +3,9 @@
   "version": "1.0.0",
   "description": "A Big SSH",
   "dependencies": {
-    "node-red-biglib": "^1.0.1"
+    "event-stream": "^3.3.2",
+    "node-red-biglib": "^1.0.1",
+    "ssh2": "^0.5.0"
   },
   "keywords": [
     "node-red"
