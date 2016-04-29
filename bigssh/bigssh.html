@@ -37,8 +37,8 @@
     RED.nodes.registerType('SSH_Credentials',{
         category: 'config',
         defaults: {
-            host: { value: "127.0.0.1", required: true},
-            port: { value: "22", required: true},
+            host: { value: "127.0.0.1", required: true },
+            port: { value: "22", required: true },
             userlabel: { value: "" }
         },
         credentials: {
@@ -48,8 +48,11 @@
         label: function() {
             return this.userlabel;
         },
-        oneditsave: function() {
-            this.userlabel = (this.credentials ? this.credentials.username : '?') + '@' + this.host;
+        oneditsave: function(d) {
+            var u = $("#node-config-input-username").val();
+            var h = $("#node-config-input-host").val();
+            
+            this.userlabel = (u?u+"@":"")+ (h?h:"");
         }
     });
 </script>
@@ -74,20 +77,20 @@
 </script>
 
 <script type="text/x-red" data-help-name="bigssh">
-    <p>Reads the specified file and sends the content as <code>msg.payload</code>,
-    and the filename as <code>msg.filename</code>.</p>
-    <p>The filename can be configured in the node. If left blank it should be
-    set by <code>msg.filename</code> on the incoming message.</p>
-    <p>The node can send <b>blocks of data</b> or <b>lines of data</b> or <b>a whole buffer of data</b>
+    <p>Launchs a remote command using SSH. Credentials are stored using a configuration</p>
+    <p>The node has one input which is used by the SSH command to receive data (stdin for the remote command)</p>
+    <p>The first output is the output for the command (stdout)</p>
+    <p>The second output is the <code>control</code> output as <code>big ssh</code> is a big node.</p>
+    <p>The third output is the error output for the command (stderr)</p>
 </script>
 
 <script type="text/javascript">
 
     RED.nodes.registerType('bigssh',{
-        category: 'advanced',
+        category: 'network',
         defaults: {
             name: { value: "" },
-            commandLine: { value: "/bin/false" },
+            commandLine: { value: "" },
             commandArgs: { value: "" },
             minError: { value: 1 },
             myssh: { type: "SSH_Credentials", required: true },
@@ -95,7 +98,7 @@
         color:"#0099cc",
         inputs:1,
         outputs:3,
-        icon: "server.png",
+        icon: "white-globe.png",
         label: function() {
             var levelNode = RED.nodes.node(this.myssh);
             return this.name||(levelNode?levelNode.label():"Big SSH");

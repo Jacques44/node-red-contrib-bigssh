@@ -50,13 +50,8 @@ module.exports = function(RED) {
         host: this.host,
         port: this.port,
         username: this.credentials.username,
-        privateKey: function() {
-          try {
-            return require('fs').readFileSync(this.credentials.privateKey)
-          } catch (err) { 
-            //throw new Error("Unable to read private key file: " + err.Message )
-          }
-        }.bind(this)()
+        privateKey: undefined,
+        privateKeyFile: this.credentials.privateKey
       }
 
       //
@@ -65,20 +60,36 @@ module.exports = function(RED) {
       //
       this.execute = function(my_config) {
 
+        // Choice was made to read the keyfile at each run in order to make it possible to correct a configuration
+        // without restarting
+        try {
+          ssh_config.privateKey = require('fs').readFileSync(ssh_config.privateKeyFile);
+        } catch (err) {
+          throw new Error("Private Key: " + err.Message);
+        }
+
+        // Create 3 passthrough in order to return a full set of streams far before they are really connected to a valid ssh remote command
         var stdin  = new stream.PassThrough({ objectMode: true }); // acts as a buffer while ssh is connecting
         var stdout = new stream.PassThrough({ objectMode: true });
         var ret = require('event-stream').duplex(stdin, stdout);
 
         var stderr = new stream.PassThrough({ objectMode: true });
+
+        // the others property is known by biglib and used to send extra streams to extra outputs
         ret.others = [ stderr ];
 
+        // Here it is, the job is starting now
         var conn = new require('ssh2').Client();
+
+        // this means "biglib"
         this.working("Connecting to " + ssh_config.host + "...");
 
         conn.on('ready', function() {
 
           var commandLine = my_config.commandLine + ' ' + ((my_config.commandArgs || []).map(function(x) { return x.replace(' ', '\\ ') })).join(' ');
-          this.working("Executing " + commandLine.substr(0,10) + "...");
+
+          // this means biglib
+          this.working("Executing " + commandLine.substr(0,20) + "...");
 
           conn.exec(commandLine, function(err, stream) {
             if (err) return ret.emit('error', err);
@@ -86,11 +97,12 @@ module.exports = function(RED) {
             this.working('Launched, waiting for data...');
 
             stream
-              .on('close', function(code, signal) {                          
+              .on('close', function(code, signal) {  
+
+                // Gives biglib extra informations using the "stats" function                        
                 this.stats({ rc: code, signal: signal });              
               }.bind(this))
               .on('error', function(err) {
-                console.log("On ERROR bigssh conn.exec");
                 ret.emit('error', err);
               })
 
@@ -104,7 +116,6 @@ module.exports = function(RED) {
 
         }.bind(this))
         .on('error', function(err) {
-          console.log("On ERROR bigssh conn");
           ret.emit('error', err);
         })
         .connect(ssh_config)
@@ -134,18 +145,18 @@ module.exports = function(RED) {
 
       var crednode = RED.nodes.getNode(config.myssh);
 
+      // Custom on_finish callback used to correct the node status relative to the command return code
       var my_finish = function(stats) {        
         if (stats.rc >= config.minError) this.set_error(new Error("Return code " + stats.rc));        
       };
 
       // new instance of biglib for this configuration
       var bignode = new biglib({ 
-        config: config, node: this, 
-        status: 'filesize', 
-        parser_config: ssh_options, 
-        parser: crednode.execute, 
-        generator: 'remote',
-        on_finish: my_finish
+        config: config, node: this,   // biglib needs to know the node configuration and the node itself (for statuses and sends)
+        status: 'filesize',           // define the kind of informations displayed while running
+        parser_config: ssh_options,   // the parser configuration (ie the known options the parser will understand)
+        parser: crednode.execute,     // the parser (ie the remote command)
+        on_finish: my_finish          // custom on_finish handler
       });
 
       // biglib changes the configuration to add some properties
