@@ -46,45 +46,53 @@ module.exports = function(RED) {
       this.label = '';
       this.userlabel = n.userlabel;
 
-      this.execute = function(my_config) {
+      var ssh_config = {
+        host: this.host,
+        port: this.port,
+        username: this.credentials.username,
+        privateKey: function() {
+          try {
+            return require('fs').readFileSync(this.credentials.privateKey)
+          } catch (err) { 
+            //throw new Error("Unable to read private key file: " + err.Message )
+          }
+        }.bind(this)()
+      }
 
-        var ssh_config = {
-          host: this.host,
-          port: this.port,
-          username: this.credentials.username,
-          privateKey: function() {
-            try {
-              return require('fs').readFileSync(this.credentials.privateKey)
-            } catch (err) { throw new Error("Unable to read private key file: " + err.Message )}
-          }.bind(this)()
-        }
+      //
+      // In order to make this an instance while the object is common, it must not have any access to this.
+      // execute must be called in the context of the node using these credentials
+      //
+      this.execute = function(my_config) {
 
         var stdin  = new stream.PassThrough({ objectMode: true }); // acts as a buffer while ssh is connecting
         var stdout = new stream.PassThrough({ objectMode: true });
+        var ret = require('event-stream').duplex(stdin, stdout);
+
         var stderr = new stream.PassThrough({ objectMode: true });
+        ret.others = [ stderr ];
 
         var conn = new require('ssh2').Client();
-        this.emit('working', "Connecting to " + ssh_config.host + "...");
+        this.working("Connecting to " + ssh_config.host + "...");
 
         conn.on('ready', function() {
-          this.emit('working', "Executing ...");
 
           var commandLine = my_config.commandLine + ' ' + ((my_config.commandArgs || []).map(function(x) { return x.replace(' ', '\\ ') })).join(' ');
-
-          console.log("Executing: " + commandLine);
-
-          commandLine = "/bin/false";
+          this.working("Executing " + commandLine.substr(0,10) + "...");
 
           conn.exec(commandLine, function(err, stream) {
-            if (err) throw err;
+            if (err) return ret.emit('error', err);
 
-            this.emit('working', 'Launched...');
-            console.log("Commande launched");
+            this.working('Launched, waiting for data...');
 
-            stream.on('close', function(code, signal) {
-              var stats = { rc: code, signal: signal };               
-              this.emit('stats', stats);              
-            }.bind(this))
+            stream
+              .on('close', function(code, signal) {                          
+                this.stats({ rc: code, signal: signal });              
+              }.bind(this))
+              .on('error', function(err) {
+                console.log("On ERROR bigssh conn.exec");
+                ret.emit('error', err);
+              })
 
             // SSH stream is available, connect the bufstream
             stdin.pipe(stream).pipe(stdout);
@@ -94,10 +102,12 @@ module.exports = function(RED) {
 
           }.bind(this));      
 
-        }.bind(this)).connect(ssh_config)
-
-        var ret = require('event-stream').duplex(stdin, stdout);
-        ret.others = [ stderr ];
+        }.bind(this))
+        .on('error', function(err) {
+          console.log("On ERROR bigssh conn");
+          ret.emit('error', err);
+        })
+        .connect(ssh_config)
 
         return ret;
       }
@@ -124,19 +134,18 @@ module.exports = function(RED) {
 
       var crednode = RED.nodes.getNode(config.myssh);
 
+      var my_finish = function(stats) {        
+        if (stats.rc >= config.minError) this.set_error(new Error("Return code " + stats.rc));        
+      };
+
       // new instance of biglib for this configuration
       var bignode = new biglib({ 
         config: config, node: this, 
         status: 'filesize', 
         parser_config: ssh_options, 
-        parser: crednode.execute.bind(crednode), 
-        generator: 'remote' 
-      });
-
-      crednode.on('working', bignode.working.bind(bignode));
-      crednode.on('stats', function(stats) {        
-        if (stats.rc >= config.minError) stats._err = new Error("Return code " + stats.rc);
-        bignode.stats(stats);
+        parser: crednode.execute, 
+        generator: 'remote',
+        on_finish: my_finish
       });
 
       // biglib changes the configuration to add some properties

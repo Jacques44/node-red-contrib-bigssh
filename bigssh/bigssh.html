@@ -57,37 +57,19 @@
 <script type="text/x-red" data-template-name="bigssh">
 
     <div class="form-row">
-        <label for="node-input-mydb"><i class="fa fa-database"></i> Database</label>
+        <label for="node-input-mydb"><i class="fa fa-database"></i> <span data-i18n="bigssh.label.credentials"></span></label>
         <input type="text" id="node-input-myssh">
     </div>
 
     <div class="form-row">
-         <label for="node-input-filename"><i class="fa fa-file"></i> <span data-i18n="bigssh.label.filename"></span></label>
-         <input type="text" id="node-input-filename" data-i18n="[placeholder]bigssh.label.filename">
-    </div>
-  <div class="form-row">
-      <label>&nbsp;</label>
-      <input type="checkbox" id="node-input-nopayload" style="display: inline-block; width: auto; vertical-align: top;">
-      <label for="node-input-nopayload" style="width: 70%;"><span data-i18n="bigssh.label.nopayload"></span></label>
-  </div>      
-
-    <div class="form-row">
-        <label for="node-input-encoding"><i class="fa fa-sign-in"></i> <span data-i18n="bigssh.label.encoding"></span></label>
-        <select id="node-input-encoding">
-            <option value="utf8" data-i18n="bigssh.label.line_encoding_utf8"></option>
-            <option value="ascii" data-i18n="bigssh.label.line_encoding_ascii"></option>            
-            <option value="base64" data-i18n="bigssh.label.line_encoding_base64"></option>
-            <option value="binary" data-i18n="bigssh.label.line_encoding_binary"></option>
-            <option value="hex" data-i18n="bigssh.label.line_encoding_hex"></option>
-            <option value="ucs2" data-i18n="bigssh.label.line_encoding_ucs2"></option>
-        </select>
-    </div>
+         <label for="node-input-commandLine"><i class="fa fa-file"></i> <span data-i18n="bigssh.label.commandLine"></span></label>
+         <input type="text" id="node-input-commandLine" data-i18n="[placeholder]bigssh.label.commandLine">
+    </div>   
 
      <div class="form-row">
         <label for="node-input-name"><i class="fa fa-tag"></i> <span data-i18n="bigssh.label.name"></span></label>
         <input type="text" id="node-input-name" data-i18n="[placeholder]bigssh.label.name">
-    </div>
-    
+    </div> 
 
 </script>
 
@@ -108,8 +90,6 @@
             commandLine: { value: "/bin/false" },
             commandArgs: { value: "" },
             minError: { value: 1 },
-            filename: { value:"" },
-            encoding: { value: "utf8" },
             myssh: { type: "SSH_Credentials", required: true },
         },       
         color:"#0099cc",
