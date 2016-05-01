@@ -1,0 +1,106 @@
+<!--
+  Copyright 2013, 2014 IBM Corp.
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+
+<script type="text/x-red" data-template-name="bigexec">
+
+    <div class="form-row">
+         <label for="node-input-command"><i class="fa fa-terminal"></i> <span data-i18n="bigexec.label.command"></span></label>
+         <input type="text" id="node-input-command" data-i18n="[placeholder]bigexec.label.command">
+    </div>   
+
+    <div class="form-row">
+         <label for="node-input-commandArgs"><i class="fa fa-plus-plus"></i> <span data-i18n="bigexec.label.commandArgs"></span></label>
+         <input type="text" id="node-input-commandArgs" data-i18n="[placeholder]bigexec.label.commandArgs">
+    </div>   
+
+    <div class="form-row">
+         <label for="node-input-cwd"><i class="fa fa-folder-open"></i> <span data-i18n="bigexec.label.cwd"></span></label>
+         <input type="text" id="node-input-cwd" data-i18n="[placeholder]bigexec.label.cwd">
+    </div>       
+
+    <div class="form-row">
+        <label>&nbsp;</label>
+        <input type="checkbox" id="node-input-shell" style="display: inline-block; width: auto; vertical-align: top;">
+        <label for="node-input-shell" style="width: 70%;"><span data-i18n="bigexec.label.shell"></span></label>
+    </div>       
+
+    <div class="form-row">
+        <label>&nbsp;</label>
+        <input type="checkbox" id="node-input-noStdin" style="display: inline-block; width: auto; vertical-align: top;">
+        <label for="node-input-noStdin" style="width: 70%;"><span data-i18n="bigexec.label.noStdin"></span></label>
+    </div>    
+
+   <div class="form-row">
+        <label>&nbsp;</label>
+        <input type="checkbox" id="node-input-payloadIsArg" style="display: inline-block; width: auto; vertical-align: top;">
+        <label for="node-input-payloadIsArg" style="width: 70%;"><span data-i18n="bigexec.label.payloadIsArg"></span></label>
+    </div>     
+
+    <div class="form-row">
+        <label>&nbsp;</label>
+        <label for="node-input-minWarning" style="width: 30%;"><i class="fa fa-truck"></i> <span data-i18n="bigexec.label.minWarning"></span></label>
+        <input style="width: 10%;" type="text" id="node-input-minWarning" data-i18n="[placeholder]bigexec.label.minWarningWM">
+    </div>   
+
+    <div class="form-row">
+        <label>&nbsp;</label>
+        <label for="node-input-minError" style="width: 30%;"><i class="fa fa-truck"></i> <span data-i18n="bigexec.label.minError"></span></label>
+        <input style="width: 10%;" type="text" id="node-input-minError" data-i18n="[placeholder]bigexec.label.minErrorWM">
+    </div>           
+
+     <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> <span data-i18n="bigexec.label.name"></span></label>
+        <input type="text" id="node-input-name" data-i18n="[placeholder]bigexec.label.name">
+    </div> 
+
+</script>
+
+<script type="text/x-red" data-help-name="bigexec">
+    <p>Launchs a command using SSH. Credentials are stored using a configuration</p>
+    <p>The node has one input which is used by the SSH command to receive data (stdin for the remote command)</p>
+    <p>The first output is the output for the command (stdout)</p>
+    <p>The second output is the <code>control</code> output as <code>big ssh</code> is a big node.</p>
+    <p>The third output is the error output for the command (stderr)</p>
+</script>
+
+<script type="text/javascript">
+
+    RED.nodes.registerType('bigexec', {
+        category: 'network',
+        defaults: {
+            name: { value: "" },
+            command: { value: "", required: true },
+            commandArgs: { value: "" },
+            minError: { value: 1 },
+            minWarning: { value: 1 },
+            cwd: { value: "" },
+            shell: { value: "" },
+            noStdin: { value: false },
+            payloadIsArg: { value: false }
+        },       
+        color:"#0099cc",
+        inputs:1,
+        outputs:2,
+        icon: "white-globe.png",
+        label: function() {
+            return this.name||"Big Exec";
+        },
+        labelStyle: function() {
+            return this.name?"node_label_italic":"";
+        }
+    });
+
+</script>
