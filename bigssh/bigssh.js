@@ -60,6 +60,10 @@ module.exports = function(RED) {
       //
       this.execute = function(my_config) {
 
+        // This dummy writable is used when the command does not need any data on its stdin
+        // If any data is coming, this stream drops it and no "EPIPE error" is thrown
+        var dummy = biglib.dummy_writable(my_config.noStdin);   
+
         // Choice was made to read the keyfile at each run in order to make it possible to correct a configuration
         // without restarting
         try {
@@ -71,7 +75,7 @@ module.exports = function(RED) {
         // Create 3 passthrough in order to return a full set of streams far before they are really connected to a valid ssh remote command
         var stdin  = new stream.PassThrough({ objectMode: true }); // acts as a buffer while ssh is connecting
         var stdout = new stream.PassThrough({ objectMode: true });
-        var ret = require('event-stream').duplex(stdin, stdout);
+        var ret = require('event-stream').duplex(my_config.noStdin ? dummy : stdin, stdout);
 
         var stderr = new stream.PassThrough({ objectMode: true });
 
@@ -86,7 +90,7 @@ module.exports = function(RED) {
 
         conn.on('ready', function() {
 
-          var commandLine = my_config.commandLine + ' ' + ((my_config.commandArgs || []).map(function(x) { return x.replace(' ', '\\ ') })).join(' ');
+          var commandLine = my_config.commandLine + ' ' + biglib.argument_to_string(my_config.commandArgs.concat(my_config.commandArgs2||[]));
 
           // this means biglib
           this.working("Executing " + commandLine.substr(0,20) + "...");
@@ -100,7 +104,8 @@ module.exports = function(RED) {
               .on('close', function(code, signal) {  
 
                 // Gives biglib extra informations using the "stats" function                        
-                this.stats({ rc: code, signal: signal });              
+                this.stats({ rc: code, signal: signal }); 
+                ret.emit('my_finish');             
               }.bind(this))
               .on('error', function(err) {
                 ret.emit('error', err);
@@ -132,10 +137,13 @@ module.exports = function(RED) {
       }
     });      
 
-    const ssh_options = {
+    var ssh_options = {
       "commandLine": "",
-      "commandArgs": [],
-      "minError": 1  
+      "commandArgs": { value: "", validation: biglib.argument_to_array },     // Arguments from the configuration box
+      "commandArgs2": { value: "", validation: biglib.argument_to_array },    // Payload as additional arguments if required
+      "minWarning": 1,                                                        // The min return code the node will consider it is a warning
+      "minError": 8,                                                          // The min return code the node will consider it is as an error
+      "noStdin": false                                                        // Command does require an input (used to avoid EPIPE error)                                                   // Command does require an input (used to avoid EPIPE error)
     }    
 
     function BigSSH(config) {
@@ -145,24 +153,30 @@ module.exports = function(RED) {
 
       var crednode = RED.nodes.getNode(config.myssh);
 
-      // Custom on_finish callback used to correct the node status relative to the command return code
-      var my_finish = function(stats) {        
-        if (stats.rc >= config.minError) this.set_error(new Error("Return code " + stats.rc));        
-      };
-
       // new instance of biglib for this configuration
       var bignode = new biglib({ 
         config: config, node: this,   // biglib needs to know the node configuration and the node itself (for statuses and sends)
         status: 'filesize',           // define the kind of informations displayed while running
         parser_config: ssh_options,   // the parser configuration (ie the known options the parser will understand)
         parser: crednode.execute,     // the parser (ie the remote command)
-        on_finish: my_finish          // custom on_finish handler
+        on_finish: biglib.min_finish, // custom on_finish handler
+        finish_event: 'my_finish'     // custom finish event to listen to
       });
 
       // biglib changes the configuration to add some properties
       config = bignode.config();
 
-      this.on('input', bignode.main.bind(bignode));
+      this.on('input', function(msg) {
+
+        // Is payload an extra argument
+        delete config.commandArgs2;
+        if (config.payloadIsArg && msg.payload) {
+          msg.config = msg.config || {};
+          msg.config.commandArgs2 = msg.payload;
+        }
+
+        bignode.main.call(bignode, msg);
+      })
     }  
 
     RED.nodes.registerType("bigssh", BigSSH);

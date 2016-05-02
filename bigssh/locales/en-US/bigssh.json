@@ -11,7 +11,13 @@
             "privateKey": "Private Key Path",
             "commandLine": "Command",
             "generator": "Stdin from a file",
-            "credentials": "Credentials"
+            "credentials": "Credentials",
+            "noStdin": "Command has no input",
+            "payloadIsArg": "Payload is an argument",
+            "minError": "Min error code",
+            "minWarning": "Min warning code",
+            "minWarningWM": "warn",
+            "minErrorWM": "error"            
         }    
     }
 }
