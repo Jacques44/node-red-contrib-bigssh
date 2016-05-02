@@ -1,0 +1,18 @@
+{
+    "bigexec": {
+        "label": {
+            "nodelabel": "Big Exec",
+            "name": "Name",
+            "command": "Command",
+            "commandArgs": "Arguments",
+            "cwd": "Directory",
+            "shell": "Use shell",
+            "noStdin": "Command has no input",
+            "payloadIsArg": "Payload is an argument",
+            "minError": "Min error code",
+            "minWarning": "Min warning code",
+            "minWarningWM": "warn",
+            "minErrorWM": "error"
+        }    
+    }
+}

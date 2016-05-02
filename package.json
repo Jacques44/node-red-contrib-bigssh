@@ -1,28 +1,28 @@
 {
-  "name": "node-red-contrib-bigssh",
+  "name": "node-red-contrib-bigexec",
   "version": "1.0.0",
-  "description": "A Big SSH",
+  "description": "A Big Exec",
   "dependencies": {
     "event-stream": "^3.3.2",
     "node-red-biglib": "^1.0.1",
-    "ssh2": "^0.5.0"
+    "shell-quote": "^1.6.0"
   },
   "keywords": [
     "node-red"
   ],
   "node-red": {
     "nodes": {
-      "bigssh": "bigssh/bigssh.js"
+      "bigexec": "bigexec/bigexec.js"
     }
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/Jacques44/node-red-contrib-bigssh"
+    "url": "https://github.com/Jacques44/node-red-contrib-bigexec"
   },
   "license": "Apache-2.0",
   "bugs": {
-    "url": "https://github.com/Jacques44/node-red-contrib-bigssh/issues"
+    "url": "https://github.com/Jacques44/node-red-contrib-bigexec/issues"
   },
-  "homepage": "https://github.com/Jacques44/node-red-contrib-bigssh",
-  "_id": "node-red-contrib-bigssh@1.0.0"
+  "homepage": "https://github.com/Jacques44/node-red-contrib-bigexec",
+  "_id": "node-red-contrib-bigexec@1.0.0"
 }
