@@ -73,9 +73,17 @@ module.exports = function(RED) {
         }
 
         // Create 3 passthrough in order to return a full set of streams far before they are really connected to a valid ssh remote command
-        var stdin  = new stream.PassThrough({ objectMode: true }); // acts as a buffer while ssh is connecting
+        //var stdin  = new stream.PassThrough({ objectMode: true }); // acts as a buffer while ssh is connecting
+
+        // This to avoid "invalid chunk data" when payload is not a string
+        var stdin = biglib.stringify_stream();
+
         var stdout = new stream.PassThrough({ objectMode: true });
+
         var ret = require('event-stream').duplex(my_config.noStdin ? dummy : stdin, stdout);
+
+        // Not a good idea at all ! If done, ssh is blocking its output at about 1 Mb of data!
+        //if (my_config.noStdin) stdin.end();
 
         var stderr = new stream.PassThrough({ objectMode: true });
 
@@ -105,7 +113,7 @@ module.exports = function(RED) {
 
                 // Gives biglib extra informations using the "stats" function                        
                 this.stats({ rc: code, signal: signal }); 
-                ret.emit('my_finish');             
+                ret.emit('my_finish');         
               }.bind(this))
               .on('error', function(err) {
                 ret.emit('error', err);
@@ -153,10 +161,13 @@ module.exports = function(RED) {
 
       var crednode = RED.nodes.getNode(config.myssh);
 
+      // Custom progress function
+      var progress = function(running) { return running ? "running for " + this.duration() : ("done with rc " + (this._runtime_control.rc != undefined ? this._runtime_control.rc : "?")) }
+
       // new instance of biglib for this configuration
       var bignode = new biglib({ 
         config: config, node: this,   // biglib needs to know the node configuration and the node itself (for statuses and sends)
-        status: 'filesize',           // define the kind of informations displayed while running
+        status: progress,             // define the kind of informations displayed while running
         parser_config: ssh_options,   // the parser configuration (ie the known options the parser will understand)
         parser: crednode.execute,     // the parser (ie the remote command)
         on_finish: biglib.min_finish, // custom on_finish handler
@@ -173,6 +184,9 @@ module.exports = function(RED) {
         if (config.payloadIsArg && msg.payload) {
           msg.config = msg.config || {};
           msg.config.commandArgs2 = msg.payload;
+
+          // if not, the size_stream which streams to the command will throw EPIPE
+          delete msg.payload;
         }
 
         bignode.main.call(bignode, msg);

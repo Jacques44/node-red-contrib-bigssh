@@ -12,7 +12,7 @@
             "commandLine": "Command",
             "generator": "Stdin from a file",
             "credentials": "Credentials",
-            "noStdin": "Command has no input",
+            "noStdin": "Do not send payload to the command",
             "payloadIsArg": "Payload is an argument",
             "minError": "Min error code",
             "minWarning": "Min warning code",
