@@ -80,6 +80,10 @@ module.exports = function(RED) {
 
         var stdout = new stream.PassThrough({ objectMode: true });
 
+        // Consider output as. This is used when the remote command sends data in another encoding than utf8
+        if (my_config.format) child.stdout.setEncoding(format);
+
+        // Magic library to mix a Writable and a Readable stream into a Transform
         var ret = require('event-stream').duplex(my_config.noStdin ? dummy : stdin, stdout);
 
         // Not a good idea at all ! If done, ssh is blocking its output at about 1 Mb of data!
@@ -100,7 +104,7 @@ module.exports = function(RED) {
 
           var commandLine = my_config.commandLine + ' ' + biglib.argument_to_string(my_config.commandArgs.concat(my_config.commandArgs2||[]));
 
-          // this means biglib
+          // this means "biglib" instance. Substr is to avoid a text too long
           this.working("Executing " + commandLine.substr(0,20) + "...");
 
           conn.exec(commandLine, function(err, stream) {
@@ -170,8 +174,9 @@ module.exports = function(RED) {
         status: progress,             // define the kind of informations displayed while running
         parser_config: ssh_options,   // the parser configuration (ie the known options the parser will understand)
         parser: crednode.execute,     // the parser (ie the remote command)
-        on_finish: biglib.min_finish, // custom on_finish handler
-        finish_event: 'my_finish'     // custom finish event to listen to
+        on_finish: biglib.min_finish, // custom "on_finish" handler. Used to capture the return code
+        finish_event: 'my_finish',    // custom finish event to listen to. The end won't be the "close" event of the stream but the result of the custom "on_finish" handler
+        generator: 'limiter'          // acts as a generator as it's not a real filter. If multiple payloads arrive, without this, will fork as many ssh as incoming messages!
       });
 
       // biglib changes the configuration to add some properties

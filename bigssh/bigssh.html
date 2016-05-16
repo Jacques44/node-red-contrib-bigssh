@@ -83,15 +83,28 @@
 
     <div class="form-row">
         <label>&nbsp;</label>
-        <label for="node-input-minWarning" style="width: 30%;"><i class="fa fa-truck"></i> <span data-i18n="bigssh.label.minWarning"></span></label>
+        <label for="node-input-minWarning" style="width: 60%;"><i class="fa fa-truck"></i> <span data-i18n="bigssh.label.minWarning"></span></label>
         <input style="width: 10%;" type="text" id="node-input-minWarning" data-i18n="[placeholder]bigssh.label.minWarningWM">
     </div>   
 
     <div class="form-row">
         <label>&nbsp;</label>
-        <label for="node-input-minError" style="width: 30%;"><i class="fa fa-truck"></i> <span data-i18n="bigssh.label.minError"></span></label>
+        <label for="node-input-minError" style="width: 60%;"><i class="fa fa-truck"></i> <span data-i18n="bigssh.label.minError"></span></label>
         <input style="width: 10%;" type="text" id="node-input-minError" data-i18n="[placeholder]bigssh.label.minErrorWM">
     </div>          
+
+    <div class="form-row">
+        <label>&nbsp;</label>
+        <label for="node-input-format" style="width: 40%;"><i class="fa fa-sign-out"></i> <span data-i18n="bigssh.label.format"></span></label>
+        <select style="width: 35%;" id="node-input-format">    
+            <option value="utf8" data-i18n="bigssh.label.line_encoding_utf8"></option>
+            <option value="ascii" data-i18n="bigssh.label.line_encoding_ascii"></option>            
+            <option value="base64" data-i18n="bigssh.label.line_encoding_base64"></option>
+            <option value="binary" data-i18n="bigssh.label.line_encoding_binary"></option>
+            <option value="hex" data-i18n="bigssh.label.line_encoding_hex"></option>
+            <option value="ucs2" data-i18n="bigssh.label.line_encoding_ucs2"></option>
+        </select>
+    </div>      
 
      <div class="form-row">
         <label for="node-input-name"><i class="fa fa-tag"></i> <span data-i18n="bigssh.label.name"></span></label>
@@ -120,6 +133,7 @@
             minError: { value: 1 },
             minWarning: { value: 1 },
             noStdin: { value: false },
+            format: { value: "" },              // Consider output as
             payloadIsArg: { value: false },            
             myssh: { type: "SSH_Credentials", required: true },
         },       

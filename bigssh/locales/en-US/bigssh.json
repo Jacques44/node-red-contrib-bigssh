@@ -17,7 +17,15 @@
             "minError": "Min error code",
             "minWarning": "Min warning code",
             "minWarningWM": "warn",
-            "minErrorWM": "error"            
+            "minErrorWM": "error",
+            "format": "Consider stdout as",
+            "line_encoding": "encoding",
+            "line_encoding_utf8": "utf8",
+            "line_encoding_ascii": "ascii",
+            "line_encoding_base64": "base64",
+            "line_encoding_binary": "binary (latin-1)",
+            "line_encoding_hex": "hex (hexadecimal)",
+            "line_encoding_ucs2": "ucs2 (= uft16le)"               
         }    
     }
 }
