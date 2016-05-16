@@ -149,6 +149,7 @@ module.exports = function(RED) {
       }
     });      
 
+    // The options the spawner will understand
     var ssh_options = {
       "commandLine": "",
       "commandArgs": { value: "", validation: biglib.argument_to_array },     // Arguments from the configuration box
