@@ -9,6 +9,7 @@
             "port": "Port",
             "user": "Username",
             "privateKey": "Private Key Path",
+            "passphrase": "Pass phrase, if any",
             "commandLine": "Command",
             "generator": "Stdin from a file",
             "credentials": "Credentials",

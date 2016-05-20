@@ -28,9 +28,13 @@
         <input type="text" id="node-config-input-username">
     </div>
         <div class="form-row">
-        <label for="node-config-input-privateKey"><i class="fa fa-lock"></i> <span data-i18n="bigssh.label.privateKey"></span></label>
-        <input type="text" id="node-config-input-privateKey">
+        <label for="node-config-input-privateKey" style="width: 30%;" ><i class="fa fa-lock"></i> <span data-i18n="bigssh.label.privateKey"></span></label>
+        <input type="text" style="width: 60%;" id="node-config-input-privateKey">
     </div>
+        <div class="form-row">
+        <label for="node-config-input-passphrase" style="width: 30%;" ><i class="fa fa-lock"></i> <span data-i18n="bigssh.label.passphrase"></span></label>
+        <input type="password" style="width: 60%;" id="node-config-input-passphrase">
+    </div>    
 </script>
 
 <script type="text/javascript">
@@ -43,7 +47,8 @@
         },
         credentials: {
             username: { type: "text" },
-            privateKey: { type: "text" }
+            privateKey: { type: "text" },
+            passphrase: { type: "text" }
         },        
         label: function() {
             return this.userlabel;

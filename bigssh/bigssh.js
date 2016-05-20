@@ -51,7 +51,8 @@ module.exports = function(RED) {
         port: this.port,
         username: this.credentials.username,
         privateKey: undefined,
-        privateKeyFile: this.credentials.privateKey
+        privateKeyFile: this.credentials.privateKey,
+        passphrase: this.credentials.passphrase
       }
 
       //
@@ -145,7 +146,8 @@ module.exports = function(RED) {
     RED.nodes.registerType("SSH_Credentials", SSH_Node, {
       credentials: {
         username: { type: "text" },
-        privateKey: { type: "text" }
+        privateKey: { type: "text" },
+        passphrase: { type: "password" }
       }
     });      
 
