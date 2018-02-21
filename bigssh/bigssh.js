@@ -118,10 +118,15 @@ module.exports = function(RED) {
 
                 // Gives biglib extra informations using the "stats" function                        
                 this.stats({ rc: code, signal: signal }); 
-                ret.emit('my_finish');         
+                ret.emit('my_finish');    
+
+                conn.end();
+
               }.bind(this))
               .on('error', function(err) {
                 ret.emit('error', err);
+
+                conn.end();
               })
 
             // SSH stream is available, connect the bufstream
