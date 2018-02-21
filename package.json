@@ -1,6 +1,6 @@
 {
   "name": "node-red-contrib-bigssh",
-  "version": "1.2.1",
+  "version": "1.2.2",
   "description": "A Big SSH",
   "dependencies": {
     "event-stream": "^3.3.2",
