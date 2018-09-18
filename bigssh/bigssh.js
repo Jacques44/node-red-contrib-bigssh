@@ -54,6 +54,10 @@ module.exports = function(RED) {
         privateKeyFile: this.credentials.privateKey,
         passphrase: this.credentials.passphrase
       }
+      if (this.credentials.algorithms) {
+	ssh_config.algorithms =  {'kex': [this.credentials.algorithms]};
+      }
+
 
       //
       // In order to make this an instance while the object is common, it must not have any access to this.
@@ -152,7 +156,9 @@ module.exports = function(RED) {
       credentials: {
         username: { type: "text" },
         privateKey: { type: "text" },
-        passphrase: { type: "password" }
+        passphrase: { type: "password" },
+        algorithms: { type: "text" }
+
       }
     });      
 

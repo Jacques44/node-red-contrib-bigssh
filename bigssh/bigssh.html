@@ -35,6 +35,10 @@
         <label for="node-config-input-passphrase" style="width: 30%;" ><i class="fa fa-lock"></i> <span data-i18n="bigssh.label.passphrase"></span></label>
         <input type="password" style="width: 60%;" id="node-config-input-passphrase">
     </div>    
+        <div class="form-row">
+        <label for="node-config-input-algorithms"><i class="fa fa-user"></i> <span data-i18n="bigssh.label.algorithms"></span></label>
+        <input type="text" id="node-config-input-algorithms">
+    </div>
 </script>
 
 <script type="text/javascript">
@@ -48,7 +52,9 @@
         credentials: {
             username: { type: "text" },
             privateKey: { type: "text" },
-            passphrase: { type: "text" }
+            passphrase: { type: "text" },
+	    algorithms: { type: "text"}
+
         },        
         label: function() {
             return this.userlabel;

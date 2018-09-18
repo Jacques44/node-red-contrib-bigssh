@@ -10,6 +10,7 @@
             "user": "Username",
             "privateKey": "Private Key Path",
             "passphrase": "Pass phrase, if any",
+            "algorithms": "Key Exchange Algorithms",
             "commandLine": "Command",
             "generator": "Stdin from a file",
             "credentials": "Credentials",
