@@ -36,9 +36,29 @@
         <input type="password" style="width: 60%;" id="node-config-input-passphrase">
     </div>    
         <div class="form-row">
-        <label for="node-config-input-algorithms"><i class="fa fa-user"></i> <span data-i18n="bigssh.label.algorithms"></span></label>
+        <label for="node-config-input-algorithms"><i class="fa fa-calculator"></i> <span data-i18n="bigssh.label.algorithms"></span></label>
         <input type="text" id="node-config-input-algorithms">
     </div>
+    </div>    
+        <div class="form-row">
+        <label for="node-config-input-ciphers"><i class="fa fa-lock"></i> <span data-i18n="bigssh.label.ciphers"></span></label>
+        <input type="text" id="node-config-input-ciphers">
+    </div>    
+    </div>    
+        <div class="form-row">
+        <label for="node-config-input-serverHostKey"><i class="fa fa-key"></i> <span data-i18n="bigssh.label.serverHostKey"></span></label>
+        <input type="text" id="node-config-input-serverHostKey">
+    </div>  
+    </div>    
+        <div class="form-row">
+        <label for="node-config-input-hmac"><i class="fa fa-server"></i> <span data-i18n="bigssh.label.hmac"></span></label>
+        <input type="text" id="node-config-input-hmac">
+    </div>  
+    </div>    
+        <div class="form-row">
+        <label for="node-config-input-compress"><i class="fa fa-compress"></i> <span data-i18n="bigssh.label.compress"></span></label>
+        <input type="text" id="node-config-input-compress">
+    </div>                  
 </script>
 
 <script type="text/javascript">
@@ -53,8 +73,11 @@
             username: { type: "text" },
             privateKey: { type: "text" },
             passphrase: { type: "text" },
-	    algorithms: { type: "text"}
-
+	        algorithms: { type: "text"},
+            ciphers: { type: "text"},
+            serverHostKey: { type: "text"},
+            hmac: { type: "text"},
+            compress: { type: "text"}
         },        
         label: function() {
             return this.userlabel;

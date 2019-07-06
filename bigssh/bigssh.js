@@ -52,12 +52,15 @@ module.exports = function(RED) {
         username: this.credentials.username,
         privateKey: undefined,
         privateKeyFile: this.credentials.privateKey,
-        passphrase: this.credentials.passphrase
-      }
-      if (this.credentials.algorithms) {
-	ssh_config.algorithms =  {'kex': [this.credentials.algorithms]};
+        passphrase: this.credentials.passphrase,
+        algorithms: {}
       }
 
+      if (this.credentials.algorithms) ssh_config.algorithms.kex = [ this.credentials.algorithms ];
+      if (this.credentials.ciphers) ssh_config.algorithms.cipher = [ this.credentials.ciphers ];
+      if (this.credentials.serverHostKey) ssh_config.algorithms.serverHostKey = [ this.credentials.serverHostKey ];
+      if (this.credentials.hmac) ssh_config.algorithms.hmac = [ this.credentials.hmac ];
+      if (this.credentials.compress) ssh_config.compress.compress = [ this.credentials.compress ];
 
       //
       // In order to make this an instance while the object is common, it must not have any access to this.
@@ -157,8 +160,11 @@ module.exports = function(RED) {
         username: { type: "text" },
         privateKey: { type: "text" },
         passphrase: { type: "password" },
-        algorithms: { type: "text" }
-
+        algorithms: { type: "text" },
+        ciphers: { type: "text" },
+        serverHostKey: { type: "text" },
+        hmac: { type: "text" },
+        compress: { type: "text" }
       }
     });      
 
