@@ -50,6 +50,7 @@ module.exports = function(RED) {
         host: this.host,
         port: this.port,
         username: this.credentials.username,
+        password: this.credentials.password,
         privateKey: undefined,
         privateKeyFile: this.credentials.privateKey,
         passphrase: this.credentials.passphrase,
@@ -74,10 +75,12 @@ module.exports = function(RED) {
 
         // Choice was made to read the keyfile at each run in order to make it possible to correct a configuration
         // without restarting
-        try {
-          ssh_config.privateKey = require('fs').readFileSync(ssh_config.privateKeyFile);
-        } catch (err) {
-          throw new Error("Private Key: " + err.Message);
+        if (ssh_config.privateKeyFile != undefined) {
+          try {
+            ssh_config.privateKey = require('fs').readFileSync(ssh_config.privateKeyFile);
+          } catch (err) {
+            throw new Error("Private Key: " + err.Message);
+          }
         }
 
         // Create 3 passthrough in order to return a full set of streams far before they are really connected to a valid ssh remote command
@@ -158,6 +161,7 @@ module.exports = function(RED) {
     RED.nodes.registerType("SSH_Credentials", SSH_Node, {
       credentials: {
         username: { type: "text" },
+        password: { type: "password" },
         privateKey: { type: "text" },
         passphrase: { type: "password" },
         algorithms: { type: "text" },
