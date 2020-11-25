@@ -113,7 +113,13 @@ module.exports = function(RED) {
 
         conn.on('ready', function() {
 
-          var commandLine = my_config.commandLine + ' ' + biglib.argument_to_string(my_config.commandArgs.concat(my_config.commandArgs2||[]));
+          // If commandArgs2 is json type, command is a template string
+          var commandLine;
+          if (typeof my_config.commandArgs2 != "string") {
+            commandLine = (function(cmd, payload) { return eval('`'+cmd+'`') })(my_config.commandLine + ' ' + biglib.argument_to_string(my_config.commandArgs), my_config.commandArgs2||[])
+          } else {
+            commandLine = my_config.commandLine + ' ' + biglib.argument_to_string(my_config.commandArgs.concat(biglib.argument_to_array(my_config.commandArgs2)||[]));
+          }
 
           // this means "biglib" instance. Substr is to avoid a text too long
           this.working("Executing " + commandLine.substr(0,20) + "...");
@@ -176,7 +182,7 @@ module.exports = function(RED) {
     var ssh_options = {
       "commandLine": "",
       "commandArgs": { value: "", validation: biglib.argument_to_array },     // Arguments from the configuration box
-      "commandArgs2": { value: "", validation: biglib.argument_to_array },    // Payload as additional arguments if required
+      "commandArgs2": { value: ""                                      },     // Payload as additional arguments if required
       "minWarning": 1,                                                        // The min return code the node will consider it is a warning
       "minError": 8,                                                          // The min return code the node will consider it is as an error
       "noStdin": false                                                        // Command does require an input (used to avoid EPIPE error)                                                   // Command does require an input (used to avoid EPIPE error)
