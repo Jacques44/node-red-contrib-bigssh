@@ -7,21 +7,18 @@ npm install node-red-contrib-bigssh
 
 ## Principles for Big Nodes
 
-Big nodes are a family of node-red nodes built to handle huge data. They all rely on biglib library
-Here are the 3 rules for big nodes:
+See [biglib](https://www.npmjs.com/package/node-red-biglib) for details on Big Nodes.
+`Big Lib` and subsequent `Big Nodes` are a family of nodes built for my own purpose. They are all designed to help me build a complete process for **production purposes**. For that I needed nodes able to:
 
-###1 can handle big data block by block
+* Flow **big volume** of data (memory control, work with buffers)
+* Work with *a flow of blocks* (buffers) (multiple payload within a single job)
+* Tell what *they are doing* with extended use of statuses (color/message)
+* Use their *second output for flow control* (start/stop/running/status)
+* *Reuse messages* in order to propagate _msgid, topic
+* Depends on **state of the art** libraries for parsing (csv, xml, xlsxs, line, ...)
+* Acts as **filters by default** (1 payload = 1 action) or **data generators** (block flow)
 
-  That means, with all the big node family, can handle big amount of data working block by block using control messages
-
-###2 send start/end messages as well as statuses
-
-  That means, as all big nodes, it uses another output to send control messages (start/end/running and error states)
-
-###3 tell visually what they are doing
-
-  Visual status on the node tells if it's ready/running (blue), if all is ok and done (green) or if there is any error (red)
-  The control output can be used with big status to see what's going on
+All functionnalities are built under a library named `biglib` and all `Big Nodes` rely on it
 
 ## Usage
 
@@ -47,6 +44,8 @@ Try pasting in the flow file below that shows the node behaviour. Don't forget t
   ```json
   [{"id":"d3b7983c.c97908","type":"bigssh","z":"5f1eb5c5.4b8a5c","name":"","commandLine":"echo \"Welcome ${payload.me} to $(whoami)@$(hostname)\"","commandArgs":"","minError":1,"minWarning":1,"noStdin":false,"format":"","payloadIsArg":true,"myssh":"29df19bc.46db36","x":370,"y":200,"wires":[["477828b0.0ecb68"],["c3649904.a68108"],["743d5a09.a72bd4"]]},{"id":"c3649904.a68108","type":"bigstatus","z":"5f1eb5c5.4b8a5c","name":"","locale":"fr","show_date":true,"show_duration":false,"x":730,"y":200,"wires":[[]]},{"id":"477828b0.0ecb68","type":"bigline","z":"5f1eb5c5.4b8a5c","name":"stdout","filename":"","format":"utf8","keepEmptyLines":false,"x":570,"y":140,"wires":[["614e8cdf.3d7ea4"],[]]},{"id":"614e8cdf.3d7ea4","type":"debug","z":"5f1eb5c5.4b8a5c","name":"stdout","active":true,"tosidebar":true,"console":false,"tostatus":false,"complete":"payload","targetType":"msg","statusVal":"","statusType":"auto","x":710,"y":140,"wires":[]},{"id":"743d5a09.a72bd4","type":"bigline","z":"5f1eb5c5.4b8a5c","name":"stderr","filename":"","format":"utf8","keepEmptyLines":false,"x":570,"y":260,"wires":[["33a59bcb.34ee64"],[]]},{"id":"33a59bcb.34ee64","type":"debug","z":"5f1eb5c5.4b8a5c","name":"stderr","active":true,"tosidebar":true,"console":false,"tostatus":false,"complete":"payload","targetType":"msg","statusVal":"","statusType":"auto","x":710,"y":260,"wires":[]},{"id":"7a7fdea4.2ec13","type":"inject","z":"5f1eb5c5.4b8a5c","name":"","props":[{"p":"payload"},{"p":"topic","vt":"str"}],"repeat":"","crontab":"","once":false,"onceDelay":0.1,"topic":"","payload":"{\"me\":\"Mr J\"}","payloadType":"json","x":170,"y":200,"wires":[["d3b7983c.c97908"]]},{"id":"29df19bc.46db36","type":"SSH_Credentials","host":"127.0.0.1","port":"22","userlabel":"dummy@127.0.0.1"}]
   ```
+
+![alt tag](https://user-images.githubusercontent.com/18165555/100285362-11b7cc00-2f71-11eb-9491-5726a1140675.png)
 
 ## Author
 
