@@ -18,7 +18,7 @@ See [biglib](https://www.npmjs.com/package/node-red-biglib) for details on Big N
 * Depends on **state of the art** libraries for parsing (csv, xml, xlsxs, line, ...)
 * Acts as **filters by default** (1 payload = 1 action) or **data generators** (block flow)
 
-All functionnalities are built under a library named `biglib` and all `Big Nodes` rely on it
+All functionnalities are built into a library named `biglib` and all `Big Nodes` rely on it
 
 ## Usage
 
