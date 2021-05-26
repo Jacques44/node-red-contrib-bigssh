@@ -108,6 +108,9 @@ module.exports = function(RED) {
         // Here it is, the job is starting now
         var conn = new require('ssh2').Client();
 
+        // It's now possible to override the host using msg.config.host
+        if (my_config.host) { ssh_config.host = my_config.host }
+
         // this means "biglib"
         this.working("Connecting to " + ssh_config.host + "...");
 
@@ -185,7 +188,8 @@ module.exports = function(RED) {
       "commandArgs2": { value: ""                                      },     // Payload as additional arguments if required
       "minWarning": 1,                                                        // The min return code the node will consider it is a warning
       "minError": 8,                                                          // The min return code the node will consider it is as an error
-      "noStdin": false                                                        // Command does require an input (used to avoid EPIPE error)                                                   // Command does require an input (used to avoid EPIPE error)
+      "noStdin": false,                                                       // Command does require an input (used to avoid EPIPE error)                                   
+      "host": ""                                                              // Now it's possible to override the host using msg.config.host
     }    
 
     function BigSSH(config) {
