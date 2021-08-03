@@ -217,6 +217,44 @@ module.exports = function(RED) {
       config = bignode.config();
 
       this.on('input', function(msg) {
+        
+        if (msg && msg.config && msg.config.uhcred) {
+
+          this.new_ssh_credentials = undefined;
+
+          var myf = (function(node) {
+            if (node.type == "SSH_Credentials") {
+              if (node.userlabel == msg.config.uhcred) {
+                this.new_ssh_credentials = RED.nodes.getNode(node.id);
+              }
+            }
+          }).bind(this);
+          RED.nodes.eachNode(myf);
+
+          if (this.new_ssh_credentials) {
+            //console.log("Settings credentials to " + this.new_ssh_credentials.userlabel);
+            config.myssh = this.new_ssh_credentials.id;
+
+            this.myssh = config.myssh.id
+              
+            crednode = this.new_ssh_credentials;
+
+            bignode = new biglib({ 
+              config: config, node: this,   // biglib needs to know the node configuration and the node itself (for statuses and sends)
+              status: progress,             // define the kind of informations displayed while running
+              parser_config: ssh_options,   // the parser configuration (ie the known options the parser will understand)
+              parser: crednode.execute,     // the parser (ie the remote command)
+              on_finish: biglib.min_finish, // custom "on_finish" handler. Used to capture the return code
+              finish_event: 'my_finish',    // custom finish event to listen to. The end won't be the "close" event of the stream but the result of the custom "on_finish" handler
+              generator: 'limiter'          // acts as a generator as it's not a real filter. If multiple payloads arrive, without this, will fork as many ssh as incoming messages!
+            });
+
+            config = bignode.config();
+          } else {
+            bignode._on_finish({ "message": "Unavailable configuration for uhcred " + msg.config.uhcred});
+            return;
+          }
+        }
 
         // Is payload an extra argument
         delete config.commandArgs2;

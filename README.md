@@ -69,4 +69,9 @@ Please report any issues or suggestions via the [Github Issues list for this rep
 
 For more information, feedback, or community support see the Node-Red Google groups forum at https://groups.google.com/forum/#!forum/node-red
 
+# Releases
 
+## 1.2.9 - 2021/08/03
+
+With "msg.config.uhcred" set on its input, the node will look for this credential configuration and change to it if found. 
+This is related to issue #30 
